@@ -1,4 +1,3 @@
-
 name: dc-testsuite-kob
 services:
   kob-testsuite:
@@ -7,18 +6,23 @@ services:
     environment:
       - CUCUMBER_FILTER_TAGS=${TESTSUITE_TESTS}
       - KOB_STARTBROWSER=false
-      - KOB_PSURL=http://host.docker.internal:8080  # URL to connect PS with test driver interface if available
-      - KOB_ASURL=https://host.docker.internal:8443 # ULR to connect ePA mock services to run tests, e.g. vau handshake test
-    ports:
-      - "${KOB_WORKFLOW_UI_EXPOSE_PORT:-9020}:9020"
-      - "${KOB_TIGER_ADMIN_EXPOSE_PORT:-9021}:9021"
-      - "${KOB_TIGER_PROXY_EXPOSE_PORT:-443}:443"
+      - KOB_PSURL=http://127.0.0.1:8080  # URL to connect PS with test driver interface if available
+      - KOB_ASURL=https://127.0.0.1:8443 # ULR to connect ePA mock services to run tests, e.g. vau handshake test
     volumes:
       - ./tiger.yaml:/app/tiger.yaml:ro
       - ./kob.yaml:/app/kob.yaml:ro
       - ./settings.xml:/home/kobtest/.m2/settings.xml:ro
       - kob-testsuite-maven:/home/kobtest/.m2/repository/:rw
       - kob-testsuite-report:/app/report/:rw
+# Case 1: local Konnektor
+    # ports:
+    #   - "${KOB_WORKFLOW_UI_EXPOSE_PORT:-9020}:9020"
+    #   - "${KOB_TIGER_ADMIN_EXPOSE_PORT:-9021}:9021"
+    #   - "${KOB_TIGER_PROXY_EXPOSE_PORT:-443}:443"
+
+# Case 2: Using cloud konnektor, e.g. eHex
+    network_mode: host
+    user: root
 
 volumes:
   kob-testsuite-maven:
