@@ -1,18 +1,19 @@
-
 name: dc-testsuite-kob
+
 services:
   kob-testsuite:
     image: gematik1/kob-testsuite:2.0.1
     container_name: kob-testsuite
+
+    network_mode: host
+    user: root
+
     environment:
-      - CUCUMBER_FILTER_TAGS=${TESTSUITE_TESTS}
+      - MAVEN_OPTS=-Dcucumber.filter.tags=${TESTSUITE_TESTS}
       - KOB_STARTBROWSER=false
-      - KOB_PSURL=http://host.docker.internal:8080  # URL to connect PS with test driver interface if available
-      - KOB_ASURL=https://host.docker.internal:8443 # ULR to connect ePA mock services to run tests, e.g. vau handshake test
-    ports:
-      - "${KOB_WORKFLOW_UI_EXPOSE_PORT:-9020}:9020"
-      - "${KOB_TIGER_ADMIN_EXPOSE_PORT:-9021}:9021"
-      - "${KOB_TIGER_PROXY_EXPOSE_PORT:-443}:443"
+      - KOB_PSURL=http://host.docker.internal:8080
+      - KOB_ASURL=https://host.docker.internal:8443
+
     volumes:
       - ./tiger.yaml:/app/tiger.yaml:ro
       - ./kob.yaml:/app/kob.yaml:ro
@@ -25,3 +26,4 @@ volumes:
     name: kob-testsuite-maven
   kob-testsuite-report:
     name: kob-testsuite-report
+
